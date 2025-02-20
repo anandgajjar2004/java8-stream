@@ -19,8 +19,7 @@ import com.java8.stream.entity.MatchRecord;
 
 public class ViratKohliStatsAnalyzer {
 
-	public static final String SEPERATOR = "============================================";
-
+	public static final String SEPARATOR = "============================================";
 
 	private static final Logger logger = LoggerFactory.getLogger(ViratKohliStatsAnalyzer.class);
 
@@ -33,10 +32,9 @@ public class ViratKohliStatsAnalyzer {
 		List<MatchRecord> records = viratKohliStatsAnalyzer.loadMatchRecords("virat_kohli.csv");
 		logger.info("CSV data successfully loaded! {} entries found.", records.size());
 
-
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("           Calculating Statistics           ");
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		viratKohliStatsAnalyzer.sumofAllCenturies(records);
 		viratKohliStatsAnalyzer.maximumScorefromSCenturies(records);
 		viratKohliStatsAnalyzer.groupAndLogTotalByFormat(records);
@@ -71,19 +69,19 @@ public class ViratKohliStatsAnalyzer {
 	 }
 
 	private void sumofAllCenturies(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Calculating Total Runs Scored");
 		int totalRuns = records.stream().mapToInt(MatchRecord::getScore).sum();
 		logger.info("🏏 Total Runs Scored: {}", totalRuns);
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 	}
 
 	private void maximumScorefromSCenturies(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Fetching Maximum Score from All Centuries");
 		OptionalInt maxRun = records.stream().mapToInt(MatchRecord::getScore).max();
 		logger.info("🔥 Highest Individual Score: {}", maxRun.isPresent() ? maxRun.getAsInt() : "N/A");
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 
 	}
 
@@ -95,26 +93,26 @@ public class ViratKohliStatsAnalyzer {
 	}
 
 	private void groupByOpponentAndSummingTotalScores(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Grouping Total Scores by Opponent");
 		Map<String, Integer> totalByOpponent = records.stream()
 				.collect(Collectors.groupingBy(MatchRecord::getOpponent, TreeMap::new, Collectors.summingInt(MatchRecord::getScore)));
 		totalByOpponent.forEach((opponent, totalScore) -> logger.info("⚔️ Opponent: {}, 🏏 Total Score: {}", opponent, totalScore));
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 	}
 
 	private void groupByOpponentAndCountingMatchesPlayed(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Grouping Matches Played by Opponent");
 		Map<String, Long> matchesPlayedByOpponent = records.stream()
 				.collect(Collectors.groupingBy(MatchRecord::getOpponent, Collectors.counting()));
 		matchesPlayedByOpponent.forEach((opponent, totalMatches) ->
 				logger.info("⚔️ Opponent: {}, 🎯 Matches Played: {}", opponent, totalMatches));
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 	}
 
 	private void findStadiumWithMaxMatches(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Finding the Stadium where Maximum Matches were Played");
 
 		Map<String, Long> matchesByStadium = records.stream()
@@ -124,11 +122,11 @@ public class ViratKohliStatsAnalyzer {
 				.max(Map.Entry.comparingByValue()) // Get the stadium with max matches
 				.ifPresent(entry -> logger.info("🏟️ Stadium: {}, 🎯 Matches Played: {}", entry.getKey(), entry.getValue()));
 
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 	}
 
 	private void findYearWithMaxCenturies(List<MatchRecord> records) {
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 		logger.info("Finding the Year with Maximum Centuries");
 
 		Map<String, Long> centuriesByYear = records.stream()
@@ -139,6 +137,6 @@ public class ViratKohliStatsAnalyzer {
 		centuriesByYear.entrySet().stream()
 				.max(Map.Entry.comparingByValue()) // Get the year with max centuries
 				.ifPresent(entry -> logger.info("📅 Year: {}, 💯 Centuries Scored: {}", entry.getKey(), entry.getValue()));
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 	}
 }

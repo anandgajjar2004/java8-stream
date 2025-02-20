@@ -18,7 +18,7 @@ import com.java8.stream.entity.Ipl;
 
 public class IPLStateAnalyzer {
 
-    public static final String SEPERATOR = "============================================";
+    public static final String SEPARATOR = "============================================";
 
     private static final Logger logger = LoggerFactory.getLogger(IPLStateAnalyzer.class);
 
@@ -31,9 +31,9 @@ public class IPLStateAnalyzer {
         List<Ipl> records = iplStateAnalyzer.loadMatchRecords("ball_by_ball_ipl.csv");
         logger.info("CSV data successfully loaded! {} entries found.", records.size());
 
-        logger.info(SEPERATOR);
+        logger.info(SEPARATOR);
 		logger.info("           Calculating IPL Statistics           ");
-		logger.info(SEPERATOR);
+		logger.info(SEPARATOR);
 
 		iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "RG Sharma");
 		iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "V Kohli");
@@ -81,7 +81,7 @@ public class IPLStateAnalyzer {
     
     
     private void totalRunsScoredByPlayerAndYear(List<Ipl> records, String playerName) {
-        logger.info(SEPERATOR);
+        logger.info(SEPARATOR);
         logger.info("Total Runs Scored by {} by Year", playerName);
 
         Map<Integer, Integer> totalByYear = records.stream()
@@ -95,6 +95,6 @@ public class IPLStateAnalyzer {
         totalByYear.forEach((year, sum) ->
                 logger.info("Year: {}, Total Score: {}", year, sum)
         );
-        logger.info(SEPERATOR);
+        logger.info(SEPARATOR);
     }
 }
