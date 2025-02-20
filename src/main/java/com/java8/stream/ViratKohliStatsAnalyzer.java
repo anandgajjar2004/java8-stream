@@ -19,6 +19,9 @@ import com.java8.stream.entity.MatchRecord;
 
 public class ViratKohliStatsAnalyzer {
 
+	public static final String SEPERATOR = "============================================";
+
+
 	private static final Logger logger = LoggerFactory.getLogger(ViratKohliStatsAnalyzer.class);
 
 	public static void main(String[] args) {
@@ -31,9 +34,9 @@ public class ViratKohliStatsAnalyzer {
 		logger.info("CSV data successfully loaded! {} entries found.", records.size());
 
 
-		logger.info("============================================");
+		logger.info(SEPERATOR);
 		logger.info("           Calculating Statistics           ");
-		logger.info("============================================");
+		logger.info(SEPERATOR);
 		viratKohliStatsAnalyzer.sumofAllCenturies(records);
 		viratKohliStatsAnalyzer.maximumScorefromSCenturies(records);
 		viratKohliStatsAnalyzer.groupAndLogTotalByFormat(records);
@@ -68,19 +71,19 @@ public class ViratKohliStatsAnalyzer {
 	 }
 
 	private void sumofAllCenturies(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Calculating Total Runs Scored");
 		int totalRuns = records.stream().mapToInt(MatchRecord::getScore).sum();
 		logger.info("🏏 Total Runs Scored: {}", totalRuns);
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 	}
 
 	private void maximumScorefromSCenturies(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Fetching Maximum Score from All Centuries");
 		OptionalInt maxRun = records.stream().mapToInt(MatchRecord::getScore).max();
 		logger.info("🔥 Highest Individual Score: {}", maxRun.isPresent() ? maxRun.getAsInt() : "N/A");
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 
 	}
 
@@ -92,26 +95,26 @@ public class ViratKohliStatsAnalyzer {
 	}
 
 	private void groupByOpponentAndSummingTotalScores(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Grouping Total Scores by Opponent");
 		Map<String, Integer> totalByOpponent = records.stream()
 				.collect(Collectors.groupingBy(MatchRecord::getOpponent, TreeMap::new, Collectors.summingInt(MatchRecord::getScore)));
 		totalByOpponent.forEach((opponent, totalScore) -> logger.info("⚔️ Opponent: {}, 🏏 Total Score: {}", opponent, totalScore));
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 	}
 
 	private void groupByOpponentAndCountingMatchesPlayed(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Grouping Matches Played by Opponent");
 		Map<String, Long> matchesPlayedByOpponent = records.stream()
 				.collect(Collectors.groupingBy(MatchRecord::getOpponent, Collectors.counting()));
 		matchesPlayedByOpponent.forEach((opponent, totalMatches) ->
 				logger.info("⚔️ Opponent: {}, 🎯 Matches Played: {}", opponent, totalMatches));
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 	}
 
 	private void findStadiumWithMaxMatches(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Finding the Stadium where Maximum Matches were Played");
 
 		Map<String, Long> matchesByStadium = records.stream()
@@ -121,11 +124,11 @@ public class ViratKohliStatsAnalyzer {
 				.max(Map.Entry.comparingByValue()) // Get the stadium with max matches
 				.ifPresent(entry -> logger.info("🏟️ Stadium: {}, 🎯 Matches Played: {}", entry.getKey(), entry.getValue()));
 
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 	}
 
 	private void findYearWithMaxCenturies(List<MatchRecord> records) {
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 		logger.info("Finding the Year with Maximum Centuries");
 
 		Map<String, Long> centuriesByYear = records.stream()
@@ -136,6 +139,6 @@ public class ViratKohliStatsAnalyzer {
 		centuriesByYear.entrySet().stream()
 				.max(Map.Entry.comparingByValue()) // Get the year with max centuries
 				.ifPresent(entry -> logger.info("📅 Year: {}, 💯 Centuries Scored: {}", entry.getKey(), entry.getValue()));
-		logger.info("--------------------------------------------");
+		logger.info(SEPERATOR);
 	}
 }
