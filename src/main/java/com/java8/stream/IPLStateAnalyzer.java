@@ -28,20 +28,23 @@ public class IPLStateAnalyzer {
         logger.info("           Calculating IPL Statistics           ");
         logger.info(SEPARATOR);
 
-        iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "RG Sharma");
-        iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "V Kohli");
-        iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "CH Gayle");
-        iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "MS Dhoni");
+        iplStateAnalyzer.totalRunsScoredByPlayerPerYear(records, "RG Sharma");
+        iplStateAnalyzer.totalRunsScoredByPlayerPerYear(records, "V Kohli");
+        iplStateAnalyzer.totalRunsScoredByPlayerPerYear(records, "CH Gayle");
+        iplStateAnalyzer.totalRunsScoredByPlayerPerYear(records, "MS Dhoni");
 
         iplStateAnalyzer.getDismissalCountForPlayer(records, "MS Dhoni");
         iplStateAnalyzer.getDismissalCountForPlayer(records, "CH Gayle");
 
-        iplStateAnalyzer.countDismissalsbyType(records, "Caught");
-        iplStateAnalyzer.countDismissalsbyType(records, "bowled");
-        iplStateAnalyzer.countDismissalsbyType(records, "lbw");
-        iplStateAnalyzer.countDismissalsbyType(records, "run out");
-        iplStateAnalyzer.countDismissalsbyType(records, "stumped");
+        iplStateAnalyzer.top10DismissalsbyType(records, "Caught");
+        iplStateAnalyzer.top10DismissalsbyType(records, "bowled");
+        iplStateAnalyzer.top10DismissalsbyType(records, "lbw");
+        iplStateAnalyzer.top10DismissalsbyType(records, "run out");
+        iplStateAnalyzer.top10DismissalsbyType(records, "stumped");
 
+        iplStateAnalyzer.top10BowlerwithExtra(records, "['wides']");
+        iplStateAnalyzer.top10BowlerwithExtra(records, "['noballs']");
+        iplStateAnalyzer.top10BowlerwithExtra(records, "['legbyes']");
 
     }
 
@@ -86,7 +89,7 @@ public class IPLStateAnalyzer {
     }
 
 
-    private void totalRunsScoredByPlayerAndYear(List<Ipl> recordList, String playerName) {
+    private void totalRunsScoredByPlayerPerYear(List<Ipl> recordList, String playerName) {
         logger.info(SEPARATOR);
         logger.info("Total Runs Scored by {} Per Year", playerName);
 
@@ -115,13 +118,13 @@ public class IPLStateAnalyzer {
 
         // Printing result
         dismissalCount.forEach((method, count) ->
-                logger.info("{} : {} times",method ,count)
+                logger.info("{} :\t{} times",method ,count)
         );
 
         logger.info(SEPARATOR);
     }
 
-    private void countDismissalsbyType(List<Ipl> recordList, String type) {
+    private void top10DismissalsbyType(List<Ipl> recordList, String type) {
         logger.info(SEPARATOR);
         logger.info("Top 10 Players Dismissal by {} ", type);
 
@@ -140,7 +143,30 @@ public class IPLStateAnalyzer {
                 ));
 
         result.forEach((player, count) ->
-                logger.info("{} : {} Times", player, count)
+                logger.info("{} :\t{} Times", player, count)
+        );
+    }
+
+    private void top10BowlerwithExtra(List<Ipl> recordList, String type) {
+        logger.info(SEPARATOR);
+        logger.info("Top 10 Bowler Extra Run by {} ", type);
+
+
+        Map<String, Long> result =  recordList.stream()
+                .filter(data -> type.equalsIgnoreCase(data.getExtraType()) && data.getBowler() != null) // Filter Caught dismissals
+                .collect(Collectors.groupingBy(Ipl::getBowler, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
+                .limit(10) // Sort by value in descending order
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        result.forEach((player, count) ->
+                logger.info("{}:\t{} Times", player, count)
         );
     }
 }
