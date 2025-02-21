@@ -36,6 +36,13 @@ public class IPLStateAnalyzer {
         iplStateAnalyzer.getDismissalCountForPlayer(records, "MS Dhoni");
         iplStateAnalyzer.getDismissalCountForPlayer(records, "CH Gayle");
 
+        iplStateAnalyzer.countDismissalsbyType(records, "Caught");
+        iplStateAnalyzer.countDismissalsbyType(records, "bowled");
+        iplStateAnalyzer.countDismissalsbyType(records, "lbw");
+        iplStateAnalyzer.countDismissalsbyType(records, "run out");
+        iplStateAnalyzer.countDismissalsbyType(records, "stumped");
+
+
     }
 
     private List<Ipl> loadMatchRecords(String fileName) {
@@ -81,7 +88,7 @@ public class IPLStateAnalyzer {
 
     private void totalRunsScoredByPlayerAndYear(List<Ipl> recordList, String playerName) {
         logger.info(SEPARATOR);
-        logger.info("Total Runs Scored by {} by Year", playerName);
+        logger.info("Total Runs Scored by {} Per Year", playerName);
 
         Map<Integer, Integer> totalByYear = recordList.stream()
                 .filter(entry -> entry.getBatter().equalsIgnoreCase(playerName)) // Filter by player
@@ -99,7 +106,7 @@ public class IPLStateAnalyzer {
 
     private void getDismissalCountForPlayer(List<Ipl> recordList, String playerName) {
         logger.info(SEPARATOR);
-        logger.info("Group by Dismissal of {} ", playerName);
+        logger.info("Dismissal of {} by Type ", playerName);
 
         // Counting dismissals for the given player
         Map<String, Long> dismissalCount = recordList.stream()
@@ -107,11 +114,33 @@ public class IPLStateAnalyzer {
                 .collect(Collectors.groupingBy(Ipl::getDismissalMethod, Collectors.counting()));
 
         // Printing result
-        System.out.println("Dismissal count for: " + playerName);
         dismissalCount.forEach((method, count) ->
-                logger.info("  " + method + ": " + count)
+                logger.info("{} : {} times",method ,count)
         );
 
         logger.info(SEPARATOR);
+    }
+
+    private void countDismissalsbyType(List<Ipl> recordList, String type) {
+        logger.info(SEPARATOR);
+        logger.info("Top 10 Players Dismissal by {} ", type);
+
+
+        Map<String, Long> result =  recordList.stream()
+                    .filter(data -> type.equalsIgnoreCase(data.getDismissalMethod()) && data.getBatter() != null) // Filter Caught dismissals
+                    .collect(Collectors.groupingBy(Ipl::getBatter, Collectors.counting()))
+                .entrySet().stream()
+                .sorted(Map.Entry.<String, Long>comparingByValue(Comparator.reverseOrder()))
+                .limit(10) // Sort by value in descending order
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+        result.forEach((player, count) ->
+                logger.info("{} : {} Times", player, count)
+        );
     }
 }
