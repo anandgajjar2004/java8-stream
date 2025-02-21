@@ -33,6 +33,9 @@ public class IPLStateAnalyzer {
         iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "CH Gayle");
         iplStateAnalyzer.totalRunsScoredByPlayerAndYear(records, "MS Dhoni");
 
+        iplStateAnalyzer.getDismissalCountForPlayer(records, "MS Dhoni");
+        iplStateAnalyzer.getDismissalCountForPlayer(records, "CH Gayle");
+
     }
 
     private List<Ipl> loadMatchRecords(String fileName) {
@@ -91,6 +94,24 @@ public class IPLStateAnalyzer {
         totalByYear.forEach((year, sum) ->
                 logger.info("Year: {}, Total Score: {}", year, sum)
         );
+        logger.info(SEPARATOR);
+    }
+
+    private void getDismissalCountForPlayer(List<Ipl> recordList, String playerName) {
+        logger.info(SEPARATOR);
+        logger.info("Group by Dismissal of {} ", playerName);
+
+        // Counting dismissals for the given player
+        Map<String, Long> dismissalCount = recordList.stream()
+                .filter(data -> data.getBatter().equals(playerName) && data.getDismissalMethod() != null && !data.getDismissalMethod().isEmpty()) // Filter for specific player
+                .collect(Collectors.groupingBy(Ipl::getDismissalMethod, Collectors.counting()));
+
+        // Printing result
+        System.out.println("Dismissal count for: " + playerName);
+        dismissalCount.forEach((method, count) ->
+                logger.info("  " + method + ": " + count)
+        );
+
         logger.info(SEPARATOR);
     }
 }
